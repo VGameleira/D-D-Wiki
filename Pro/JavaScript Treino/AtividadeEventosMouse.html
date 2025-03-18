@@ -9,12 +9,23 @@
 </head>
 
 <body>
+    <div id="a" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="b" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="c" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="d" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="e" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="f" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="g" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="h" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="i" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+    <div id="j" onclick="clicar()" onmouseenter="entrar()" onmouseout="sair()"></div>
+
 
     <script>
-        let a = window.document.getElementById('area');
-        a.addEventListener('click', clicar);
-        a.addEventListener('mouseenter', entrar);
-        a.addEventListener('mouseout', sair);
+        let a = window.document.getElementById('a')
+        a.addEventListener('click', clicar)
+        a.addEventListener('mouseenter', entrar)
+        a.addEventListener('mouseout', sair)
 
 
         function clicar() {
@@ -23,16 +34,46 @@
 
         function entrar() {
             a.innerText = "1"
-            b.innerText = "2"
-            c.innerText = "3"
-            d.innerText = "4"
-            e.innerText = "5"
-            f.innerText = "6"
-            g.innerText = "7"
-            h.innerText = "8"
-            i.innerText = "9"
-            j.innerText = "10"
+        }
 
+        function entrar() {
+            b.innerText = "2"
+        }
+
+        function entrar() {
+            c.innerText = "3"
+        }
+
+        function entrar() {
+            d.innerText = "4"
+        }
+
+        function entrar() {
+            e.innerText = "5"
+        }
+
+        function entrar() {
+            f.innerText = "6"
+        }
+
+        function entrar() {
+            g.innerText = "7"
+        }
+
+        function entrar() {
+            h.innerText = "8"
+        }
+
+        function entrar() {
+            i.innerText = "9"
+        }
+
+        function entrar() {
+            j.innerText = "10"
+        }
+
+        function sair() {
+            a.innerText
         }
     </script>
 
