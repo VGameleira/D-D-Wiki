@@ -3,9 +3,10 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    margin: 0;
+    margin: 20px;
     padding: 0;
     background-color: #f4f4f4;
+
 }
 
 
@@ -29,6 +30,7 @@ nav {
     background-color: #000000;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2)
+    
 }
 
 nav ul {
@@ -145,10 +147,14 @@ tbody tr:hover {
 
 th {
     font-size: 16px;
+    border: 1px solid white;
+    text-align: left;
 }
 
 td {
     font-size: 14px;
+    border: 1px solid white;
+    text-align: left;
 }
 
 
@@ -163,7 +169,7 @@ section {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-    
+
 /* Imagens */
 
 figure {
@@ -179,4 +185,73 @@ figure img {
     width: 100%;
     height: auto;
     object-fit: cover;
+}
+
+
+
+/* Responsividade */
+
+/*Tablet*/
+@media screen and (min-width:768px) and (max-width:992px) {
+table, th , td {
+    font-size: 12px;
+    border-collapse: collapse;
+
+}
+body {
+    margin: 10px;
+}
+}
+
+/*DESKTOP*/
+@media screen and (min-width:992px) and (max-width:1200px) {
+
+body {
+    margin: 12px;
+}
+
+table, th , td {
+    font-size: 16px;
+    border-collapse: collapse;
+}
+}
+
+/*GRANDES TELAS*/
+
+@media screen and (min-width:1200px) {
+    body {
+        margin: 14px;
+    }
+    
+    table, th , td {
+        font-size: 20px;
+        border-collapse: collapse;
+
+    }
+
+
+}
+/* estalizar nav */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: black;
+    color: white;
+}
+.navLinks{
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.menu{
+    display: none;
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+
 }
