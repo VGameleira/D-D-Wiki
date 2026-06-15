@@ -1,0 +1,13 @@
+﻿# Dependencies
+node_modules/
+vendor/
+# Environment
+.env
+.env.local
+.DS_Store
+*.log
+# Build output
+dist/
+build/
+*.zip
+*.7z
