@@ -22,6 +22,7 @@ import './components/dnd-search.js';
  * ============================================ */
 import { renderHomePage } from './pages/home.js';
 import { renderClassPage } from './pages/class-page.js';
+import { renderSpellsPage } from './pages/spells-page.js';
 import { renderNotFoundPage } from './pages/not-found.js';
 
 /* ============================================
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const router = new DndRouter(
     [
       { pattern: '/', handler: renderHomePage },
+      { pattern: '/magias', handler: renderSpellsPage },
       { pattern: /^\/classes\/([^/]+)$/, handler: renderClassPage },
     ],
     renderNotFoundPage

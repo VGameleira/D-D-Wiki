@@ -249,6 +249,144 @@ async function scrapeClasses() {
 }
 
 /* ============================================================
+ * Spells
+ * ============================================================ */
+
+const SPELL_LEVEL_TABLES = {
+  0: 'Cantrip',
+  1: '1st Level',
+  2: '2nd Level',
+  3: '3rd Level',
+  4: '4th Level',
+  5: '5th Level',
+  6: '6th Level',
+  7: '7th Level',
+  8: '8th Level',
+  9: '9th Level',
+};
+
+const SCHOOLS_PT = {
+  'Abjuration': 'Abjuração',
+  'Conjuration': 'Conjuração',
+  'Divination': 'Adivinhação',
+  'Enchantment': 'Encantamento',
+  'Evocation': 'Evocação',
+  'Illusion': 'Ilusão',
+  'Necromancy': 'Necromancia',
+  'Transmutation': 'Transmutação',
+};
+
+async function fetchSpellPage(slug) {
+  const url = `${BASE_URL}/spell:${slug}`;
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  return await res.text();
+}
+
+function parseSpellDetail(html, slug, level) {
+  const $ = cheerio.load(html);
+
+  const nameEl = $('#page-content h1, #page-content h2').first();
+  const name = cleanText(nameEl.text()) || slug;
+
+  const paragraphs = $('#page-content > p');
+  const description = paragraphs.map((_, p) => cleanText($(p).text())).get().join('\n\n');
+
+  return {
+    slug,
+    name,
+    level,
+    school: '',
+    castingTime: '',
+    range: '',
+    components: '',
+    duration: '',
+    description,
+    source: 'dnd5e.wikidot.com',
+  };
+}
+
+async function scrapeSpells() {
+  console.log('\n🔮 Extraindo magias...');
+  const allSpells = [];
+
+  const html = await fetchPage(`${BASE_URL}/spells`);
+  const $ = cheerio.load(html);
+
+  /* Cada tabela corresponde a um nível de magia */
+  const tables = $('#page-content table');
+
+  tables.each((levelIdx, tbl) => {
+    $(tbl).find('tbody tr').each((_, row) => {
+      const th = $(row).find('th');
+      const td = $(row).find('td');
+
+      /* Pula linha de cabeçalho */
+      if (th.length > 0 && td.length === 0) return;
+
+      const cells = td;
+
+      if (cells.length >= 6) {
+        const link = $(cells[0]).find('a');
+        const name = cleanText(link.text());
+        const href = link.attr('href');
+        const slug = href ? href.replace('/spell:', '') : '';
+
+        const schoolHtml = $(cells[1]).html() || '';
+        const schoolClean = schoolHtml.replace(/<[^>]+>/g, '').trim();
+        const school = SCHOOLS_PT[schoolClean] || schoolClean;
+
+        allSpells.push({
+          slug: slug || name.toLowerCase().replace(/\s+/g, '-'),
+          name,
+          level: levelIdx,
+          school,
+          castingTime: cleanText($(cells[2]).text()),
+          range: cleanText($(cells[3]).text()),
+          duration: cleanText($(cells[4]).text()),
+          components: cleanText($(cells[5]).text()),
+          description: '',
+          source: 'dnd5e.wikidot.com',
+        });
+      }
+    });
+  });
+
+  writeJSON('spells.json', allSpells);
+  console.log(`\n🔮 ${allSpells.length} magias extraídas das listas`);
+
+  /* Opcional: buscar detalhes de cada magia (pode ser lento) */
+  if (process.env.FETCH_DETAILS) {
+    console.log('\n📖 Buscando detalhes individuais...');
+    let count = 0;
+    for (const spell of allSpells) {
+      if (!spell.slug) continue;
+      try {
+        process.stdout.write(`  ${spell.name}... `);
+        const detailHtml = await fetchSpellPage(spell.slug);
+        if (detailHtml) {
+          const $d = cheerio.load(detailHtml);
+          const descs = $d('#page-content > p').map((_, p) => cleanText($d(p).text())).get();
+          spell.description = descs.join('\n\n');
+          console.log('✓');
+        } else {
+          console.log('✗ (sem página)');
+        }
+        count++;
+      } catch (err) {
+        console.log(`✗ ${err.message}`);
+      }
+      /* Pequena pausa para não sobrecarregar */
+      if (count % 20 === 0) await new Promise(r => setTimeout(r, 1000));
+    }
+    writeJSON('spells.json', allSpells);
+    console.log(`\n📖 Detalhes de ${count} magias atualizados`);
+  }
+
+  return allSpells;
+}
+
+/* ============================================================
  * Scraper local (fallback)
  * ============================================================ */
 
@@ -325,8 +463,11 @@ if (args.includes('--local')) {
   scrapeLocalClasses(args[idx + 1]);
 } else if (args.includes('--classes')) {
   await scrapeClasses();
+} else if (args.includes('--spells')) {
+  await scrapeSpells();
 } else {
   await scrapeClasses();
+  await scrapeSpells();
 }
 
 console.log('\n✅ Extração concluída!\n');

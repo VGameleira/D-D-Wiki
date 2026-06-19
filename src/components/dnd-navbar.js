@@ -74,6 +74,7 @@ template.innerHTML = `
   <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
   <ul class="nav-links" id="navLinks" role="navigation" aria-label="Navegação principal">
     <li><a href="/" data-nav>Início</a></li>
+    <li><a href="/magias" data-nav>Magias</a></li>
     <li><a href="/classes/artifice" data-nav>Artífice</a></li>
     <li><a href="/classes/barbaro" data-nav>Bárbaro</a></li>
     <li><a href="/classes/bardo" data-nav>Bardo</a></li>
