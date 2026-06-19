@@ -4,6 +4,8 @@
  * Cabeçalho principal do site com título e slot para navegação.
  * Uso: <dnd-header><dnd-navbar slot="nav"></dnd-navbar></dnd-header>
  */
+import { toggleTheme } from '../utils/theme.js';
+
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
@@ -103,7 +105,9 @@ template.innerHTML = `
     </a>
     <div class="nav-slot">
       <slot name="nav"></slot>
-      <button class="theme-toggle" id="themeBtn" aria-label="Alternar tema claro/escuro">🌙</button>
+      <button class="theme-toggle" id="themeBtn" aria-label="Alternar tema claro/escuro">
+        <span id="themeIcon">🌙</span>
+      </button>
     </div>
   </div>
 `;
@@ -115,10 +119,15 @@ export class DndHeader extends HTMLElement {
 
     this.shadowRoot.getElementById('themeBtn')
       .addEventListener('click', this.#handleThemeToggle);
+
+    document.addEventListener('theme-change', (e) => {
+      const icon = this.shadowRoot.getElementById('themeIcon');
+      icon.textContent = e.detail.theme === 'dark' ? '☀️' : '🌙';
+    });
   }
 
   #handleThemeToggle() {
-    import('../utils/theme.js').then(({ toggleTheme }) => toggleTheme());
+    toggleTheme();
   }
 }
 

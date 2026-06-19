@@ -14,6 +14,8 @@ import './components/dnd-navbar.js';
 import './components/dnd-footer.js';
 import './components/dnd-class-card.js';
 import './components/dnd-table.js';
+import './components/dnd-spell-card.js';
+import './components/dnd-search.js';
 
 /* ============================================
  * Importação das páginas (lazy via function)
