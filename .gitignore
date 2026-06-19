@@ -1,13 +1,9 @@
-﻿# Dependencies
-node_modules/
-vendor/
-# Environment
+﻿node_modules/
+dist/
+build/
 .env
 .env.local
 .DS_Store
 *.log
-# Build output
-dist/
-build/
 *.zip
 *.7z
