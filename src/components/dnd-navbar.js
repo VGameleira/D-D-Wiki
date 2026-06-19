@@ -75,19 +75,20 @@ template.innerHTML = `
   <ul class="nav-links" id="navLinks" role="navigation" aria-label="Navegação principal">
     <li><a href="/" data-nav>Início</a></li>
     <li><a href="/magias" data-nav>Magias</a></li>
-    <li><a href="/classes/artifice" data-nav>Artífice</a></li>
-    <li><a href="/classes/barbaro" data-nav>Bárbaro</a></li>
-    <li><a href="/classes/bardo" data-nav>Bardo</a></li>
-    <li><a href="/classes/bruxo" data-nav>Bruxo</a></li>
-    <li><a href="/classes/clerigo" data-nav>Clérigo</a></li>
-    <li><a href="/classes/druida" data-nav>Druida</a></li>
-    <li><a href="/classes/feiticeiro" data-nav>Feiticeiro</a></li>
-    <li><a href="/classes/guerreiro" data-nav>Guerreiro</a></li>
-    <li><a href="/classes/ladino" data-nav>Ladino</a></li>
-    <li><a href="/classes/mago" data-nav>Mago</a></li>
-    <li><a href="/classes/monge" data-nav>Monge</a></li>
-    <li><a href="/classes/paladino" data-nav>Paladino</a></li>
-    <li><a href="/classes/patrulheiro" data-nav>Patrulheiro</a></li>
+    <li><a href="/classes/artificer" data-nav>Artífice</a></li>
+    <li><a href="/classes/barbarian" data-nav>Bárbaro</a></li>
+    <li><a href="/classes/bard" data-nav>Bardo</a></li>
+    <li><a href="/classes/warlock" data-nav>Bruxo</a></li>
+    <li><a href="/classes/cleric" data-nav>Clérigo</a></li>
+    <li><a href="/classes/druid" data-nav>Druida</a></li>
+    <li><a href="/classes/sorcerer" data-nav>Feiticeiro</a></li>
+    <li><a href="/classes/fighter" data-nav>Guerreiro</a></li>
+    <li><a href="/classes/rogue" data-nav>Ladino</a></li>
+    <li><a href="/classes/wizard" data-nav>Mago</a></li>
+    <li><a href="/classes/monk" data-nav>Monge</a></li>
+    <li><a href="/classes/paladin" data-nav>Paladino</a></li>
+    <li><a href="/classes/ranger" data-nav>Patrulheiro</a></li>
+    <li><a href="/classes/blood-hunter" data-nav>Caçador de Sangue</a></li>
   </ul>
 `;
 
