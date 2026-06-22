@@ -1,10 +1,5 @@
-/**
- * <dnd-header>
- *
- * Cabeçalho principal do site com título e slot para navegação.
- * Uso: <dnd-header><dnd-navbar slot="nav"></dnd-navbar></dnd-header>
- */
 import { toggleTheme } from '../utils/theme.js';
+import './dnd-lang-toggle.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -63,9 +58,10 @@ template.innerHTML = `
     .nav-slot {
       display: flex;
       align-items: center;
+      gap: 0.5rem;
     }
 
-    .theme-toggle {
+    .icon-btn {
       background: none;
       border: 2px solid var(--color-accent, #daa520);
       color: var(--color-accent, #daa520);
@@ -76,11 +72,11 @@ template.innerHTML = `
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-left: 1rem;
       transition: all 0.2s;
+      cursor: pointer;
     }
 
-    .theme-toggle:hover {
+    .icon-btn:hover {
       background: var(--color-accent, #daa520);
       color: #2c1810;
     }
@@ -105,7 +101,8 @@ template.innerHTML = `
     </a>
     <div class="nav-slot">
       <slot name="nav"></slot>
-      <button class="theme-toggle" id="themeBtn" aria-label="Alternar tema claro/escuro">
+      <dnd-lang-toggle></dnd-lang-toggle>
+      <button class="icon-btn" id="themeBtn" aria-label="Alternar tema claro/escuro">
         <span id="themeIcon">🌙</span>
       </button>
     </div>

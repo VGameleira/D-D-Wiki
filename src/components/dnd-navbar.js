@@ -1,9 +1,3 @@
-/**
- * <dnd-navbar>
- *
- * Barra de navegação principal com links para todas as seções.
- * Inclui menu hambúrguer para mobile.
- */
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
@@ -75,6 +69,9 @@ template.innerHTML = `
   <ul class="nav-links" id="navLinks" role="navigation" aria-label="Navegação principal">
     <li><a href="/" data-nav>Início</a></li>
     <li><a href="/magias" data-nav>Magias</a></li>
+    <li><a href="/monstros" data-nav>Monstros</a></li>
+    <li><a href="/equipamentos" data-nav>Equipamentos</a></li>
+    <li><a href="/racas" data-nav>Raças</a></li>
     <li><a href="/classes/artificer" data-nav>Artífice</a></li>
     <li><a href="/classes/barbarian" data-nav>Bárbaro</a></li>
     <li><a href="/classes/bard" data-nav>Bardo</a></li>

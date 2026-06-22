@@ -1,20 +1,10 @@
-/**
- * Carrega dados JSON de /data/ com cache em memória.
- *
- * Uso:
- *   const classes = await loadData('classes');
- *   const mago = await loadData('classes/mago');
- */
 const cache = new Map();
+const DEFAULT_TTL = 300000;
 
-/**
- * Carrega um arquivo JSON do diretório de dados.
- * @param {string} endpoint - Caminho sem extensão (ex: 'classes', 'spells/bola-de-fogo')
- * @returns {Promise<Object|Array>}
- */
-export async function loadData(endpoint) {
-  if (cache.has(endpoint)) {
-    return cache.get(endpoint);
+export async function loadData(endpoint, ttlMs = DEFAULT_TTL) {
+  const cached = cache.get(endpoint);
+  if (cached && Date.now() - cached.timestamp < ttlMs) {
+    return cached.data;
   }
 
   const url = `/data/${endpoint}.json`;
@@ -27,7 +17,7 @@ export async function loadData(endpoint) {
     }
 
     const data = await res.json();
-    cache.set(endpoint, data);
+    cache.set(endpoint, { data, timestamp: Date.now() });
     return data;
   } catch (err) {
     console.error(`[loadData] Erro ao carregar "${endpoint}":`, err);
@@ -35,9 +25,10 @@ export async function loadData(endpoint) {
   }
 }
 
-/**
- * Limpa o cache de dados (útil para recarregar conteúdo).
- */
 export function clearCache() {
   cache.clear();
+}
+
+export function invalidateCache(endpoint) {
+  cache.delete(endpoint);
 }
