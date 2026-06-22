@@ -175,8 +175,24 @@ export function normalizeSpell(raw) {
     material: raw.material ?? '',
     ritual: raw.ritual ?? false,
     concentration: raw.concentration ?? false,
+    attackType: raw.attack_type ?? null,
     description: Array.isArray(raw.desc) ? raw.desc.join('\n') : (raw.desc ?? ''),
     higherLevel: Array.isArray(raw.higher_level) ? raw.higher_level.join('\n') : (raw.higher_level ?? ''),
+    damage: raw.damage ? {
+      damageType: raw.damage.damage_type?.name ?? null,
+      damageAtSlotLevel: raw.damage.damage_at_slot_level ?? null,
+      damageAtCharacterLevel: raw.damage.damage_at_character_level ?? null,
+    } : null,
+    dc: raw.dc ? {
+      dcType: raw.dc.dc_type?.name ?? null,
+      dcSuccess: raw.dc.dc_success ?? null,
+      desc: raw.dc.desc ?? null,
+    } : null,
+    areaOfEffect: raw.area_of_effect ? {
+      size: raw.area_of_effect.size,
+      type: raw.area_of_effect.type,
+    } : null,
+    healAtSlotLevel: raw.heal_at_slot_level ?? null,
     classes: (raw.classes ?? []).map(c => c.name ?? c),
     subclasses: (raw.subclasses ?? []).map(c => c.name ?? c),
     source: '5e-bits',
@@ -237,6 +253,30 @@ export async function fetchResourceList(endpoint, signal) {
 
 export async function fetchResourceByIndex(endpoint, index, signal) {
   return apiFetch(`/${endpoint}/${index}`, { signal });
+}
+
+/* ============== NORMALIZERS (new) ============== */
+
+export function normalizeFeat(raw) {
+  return {
+    id: raw.index,
+    name: raw.name,
+    prerequisites: (raw.prerequisites ?? []).map(p => ({
+      abilityScore: p.ability_score?.name ?? '',
+      minimumScore: p.minimum_score ?? 0,
+    })),
+    desc: Array.isArray(raw.desc) ? raw.desc.join('\n') : (raw.desc ?? ''),
+    source: '5e-bits',
+  };
+}
+
+export function normalizeCondition(raw) {
+  return {
+    id: raw.index,
+    name: raw.name,
+    desc: Array.isArray(raw.desc) ? raw.desc.join('\n') : (raw.desc ?? ''),
+    source: '5e-bits',
+  };
 }
 
 /* Monsters */
@@ -307,6 +347,26 @@ export async function fetchClassFeatures(index, signal) {
 
 export async function fetchClassSubclasses(index, signal) {
   return apiFetch(`/classes/${index}/subclasses`, { signal });
+}
+
+/* Feats */
+export async function fetchFeats(signal) {
+  return apiFetch('/feats', { signal });
+}
+
+export async function fetchFeat(index, signal) {
+  const raw = await apiFetch(`/feats/${index}`, { signal });
+  return normalizeFeat(raw);
+}
+
+/* Conditions */
+export async function fetchConditions(signal) {
+  return apiFetch('/conditions', { signal });
+}
+
+export async function fetchCondition(index, signal) {
+  const raw = await apiFetch(`/conditions/${index}`, { signal });
+  return normalizeCondition(raw);
 }
 
 /* ============== GRAPHQL METHODS ============== */

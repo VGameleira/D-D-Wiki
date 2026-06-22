@@ -1,17 +1,3 @@
-/**
- * <dnd-spell-card>
- *
- * Card de magia para exibição em grades/listas.
- *
- * Atributos:
- *   - name: nome da magia
- *   - level: nível (0-9)
- *   - school: escola de magia
- *   - casting-time: tempo de conjuração
- *   - range: alcance
- *   - duration: duração
- *   - description: descrição curta
- */
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
@@ -26,6 +12,7 @@ template.innerHTML = `
       padding: var(--spacing-md, 1rem);
       transition: transform 0.2s, box-shadow 0.2s;
       height: 100%;
+      cursor: pointer;
     }
 
     .card:hover {
@@ -39,6 +26,24 @@ template.innerHTML = `
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: var(--spacing-xs, 0.25rem);
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: var(--spacing-xs, 0.25rem);
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--color-primary, #8b0000);
+      color: #fff;
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-sm, 4px);
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .name {
@@ -71,20 +76,21 @@ template.innerHTML = `
     }
   </style>
 
-  <div class="card">
+  <div class="card" id="card">
+    <div class="badges" id="badges"></div>
     <div class="level-school" id="levelSchool"></div>
     <h3 class="name" id="name"></h3>
     <div class="meta">
       <div class="meta-item">
-        <span class="meta-label">Conjuração</span>
+        <span class="meta-label" id="castingTimeLabel">Conjuração</span>
         <span id="castingTime"></span>
       </div>
       <div class="meta-item">
-        <span class="meta-label">Alcance</span>
+        <span class="meta-label" id="rangeLabel">Alcance</span>
         <span id="range"></span>
       </div>
       <div class="meta-item">
-        <span class="meta-label">Duração</span>
+        <span class="meta-label" id="durationLabel">Duração</span>
         <span id="duration"></span>
       </div>
     </div>
@@ -93,12 +99,19 @@ template.innerHTML = `
 `;
 
 export class DndSpellCard extends HTMLElement {
-  static observedAttributes = ['name', 'level', 'school', 'casting-time', 'range', 'duration', 'description'];
+  static observedAttributes = ['name', 'level', 'school', 'casting-time', 'range', 'duration', 'description', 'concentration', 'ritual', 'slug'];
 
   connectedCallback() {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.appendChild(template.content.cloneNode(true));
     this.#updateContent();
+    this.shadowRoot.getElementById('card').addEventListener('click', () => {
+      const slug = this.getAttribute('slug') || '';
+      if (slug) {
+        history.pushState(null, '', `/magias/${slug}`);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    });
   }
 
   attributeChangedCallback() {
@@ -109,6 +122,23 @@ export class DndSpellCard extends HTMLElement {
     const name = this.getAttribute('name') || '';
     const level = parseInt(this.getAttribute('level') || '0', 10);
     const school = this.getAttribute('school') || '';
+    const concentration = this.getAttribute('concentration') === 'true';
+    const ritual = this.getAttribute('ritual') === 'true';
+
+    const badges = this.shadowRoot.getElementById('badges');
+    badges.innerHTML = '';
+    if (concentration) {
+      const b = document.createElement('span');
+      b.className = 'badge';
+      b.textContent = 'Concentração';
+      badges.appendChild(b);
+    }
+    if (ritual) {
+      const b = document.createElement('span');
+      b.className = 'badge';
+      b.textContent = 'Ritual';
+      badges.appendChild(b);
+    }
 
     this.shadowRoot.getElementById('levelSchool').textContent =
       level === 0 ? `Truque · ${school}` : `${level}º círculo · ${school}`;

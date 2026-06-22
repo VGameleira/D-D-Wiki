@@ -6,6 +6,8 @@ const STATIC_LINKS = [
   { href: '/monstros', label: 'Monstros' },
   { href: '/equipamentos', label: 'Equipamentos' },
   { href: '/racas', label: 'Raças' },
+  { href: '/talentos', label: 'Talentos' },
+  { href: '/condicoes', label: 'Condições' },
 ];
 
 const template = document.createElement('template');

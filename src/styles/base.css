@@ -238,6 +238,17 @@ button {
   padding: 4rem 1rem;
 }
 
+/* === Filter Buttons === */
+.filter-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
 /* === Tags / Badges === */
 .tag {
   display: inline-block;

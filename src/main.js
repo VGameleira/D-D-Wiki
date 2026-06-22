@@ -18,6 +18,8 @@ import { renderSpellsPage } from './pages/spells-page.js';
 import { renderMonstersPage } from './pages/monsters-page.js';
 import { renderEquipmentPage } from './pages/equipment-page.js';
 import { renderRacesPage } from './pages/races-page.js';
+import { renderFeatsPage } from './pages/feats-page.js';
+import { renderConditionsPage } from './pages/conditions-page.js';
 import { renderNotFoundPage } from './pages/not-found.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,6 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const router = new DndRouter(
     [
       { pattern: '/', handler: renderHomePage },
+      { pattern: '/talentos', handler: (outlet) => renderFeatsPage(outlet, []) },
+      { pattern: /^\/talentos\/([^/]+)$/, handler: renderFeatsPage },
+      { pattern: '/condicoes', handler: (outlet) => renderConditionsPage(outlet, []) },
+      { pattern: /^\/condicoes\/([^/]+)$/, handler: renderConditionsPage },
+      { pattern: /^\/magias\/([^/]+)$/, handler: renderSpellsPage },
       { pattern: '/magias', handler: renderSpellsPage },
       { pattern: '/monstros', handler: (outlet) => renderMonstersPage(outlet, []) },
       { pattern: /^\/monstros\/([^/]+)$/, handler: renderMonstersPage },
