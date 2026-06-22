@@ -63,26 +63,36 @@ export async function renderSpellsPage(outlet) {
 
   const grid = section.querySelector('#spellGrid');
 
-  function renderSpells(level) {
+  async function renderSpells(level) {
     grid.innerHTML = '';
     const filtered = level === 'all'
       ? spells
       : spells.filter(s => s.level === parseInt(level, 10));
 
-    for (const spell of filtered) {
-      const card = document.createElement('dnd-spell-card');
-      card.setAttribute('name', spell.name);
-      card.setAttribute('level', spell.level ?? 0);
-      card.setAttribute('school', spell.school || '');
-      card.setAttribute('casting-time', spell.castingTime || '');
-      card.setAttribute('range', spell.range || '');
-      card.setAttribute('duration', spell.duration || '');
-      card.setAttribute('description', spell.description || '');
-      grid.appendChild(card);
-    }
-
     if (filtered.length === 0) {
       grid.innerHTML = '<p style="text-align:center;color:var(--color-text-muted,#6b5a4a);padding:2rem;">Nenhuma magia encontrada neste nível.</p>';
+      return;
+    }
+
+    const BATCH_SIZE = 50;
+    for (let i = 0; i < filtered.length; i += BATCH_SIZE) {
+      const batch = filtered.slice(i, i + BATCH_SIZE);
+      await new Promise(resolve => requestAnimationFrame(() => {
+        const fragment = document.createDocumentFragment();
+        for (const spell of batch) {
+          const card = document.createElement('dnd-spell-card');
+          card.setAttribute('name', spell.name);
+          card.setAttribute('level', spell.level ?? 0);
+          card.setAttribute('school', spell.school || '');
+          card.setAttribute('casting-time', spell.castingTime || '');
+          card.setAttribute('range', spell.range || '');
+          card.setAttribute('duration', spell.duration || '');
+          card.setAttribute('description', spell.description || '');
+          fragment.appendChild(card);
+        }
+        grid.appendChild(fragment);
+        resolve();
+      }));
     }
   }
 

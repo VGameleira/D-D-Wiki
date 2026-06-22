@@ -4,8 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Torre do Sábio — Enciclopédia de D&D 5e</title>
-  <meta name="description" content="Enciclopédia interativa de Dungeons & Dragons 5ª edição em português. Classes, magias, raças, talentos e mais para suas aventuras." />
+  <meta name="description" content="Enciclopédia interativa de Dungeons &amp; Dragons 5ª edição em português. Classes, magias, raças, talentos e mais para suas aventuras." />
   <meta name="theme-color" content="#8b0000" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+           script-src 'self';
+           style-src 'self' https://fonts.googleapis.com;
+           font-src https://fonts.gstatic.com;
+           connect-src 'self' https://www.dnd5eapi.co;
+           img-src 'self' https://www.dnd5eapi.co data:;" />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +27,7 @@
     <dnd-navbar slot="nav"></dnd-navbar>
   </dnd-header>
 
-  <main id="app-content" role="main">
+  <main id="app-content" role="main" aria-live="polite" aria-busy="false">
     <div class="container" style="text-align:center;padding:4rem 1rem;">
       <h2>Carregando...</h2>
     </div>

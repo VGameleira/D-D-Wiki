@@ -1,5 +1,6 @@
-import { fetchRaces, fetchRace } from '../services/api.js';
+import { fetchRaces, fetchRace, fetchBatch } from '../services/api.js';
 import { t } from '../i18n/index.js';
+import { escapeHtml } from '../utils/sanitize.js';
 
 export async function renderRacesPage(outlet, match) {
   const isDetail = !!match?.[1];
@@ -48,6 +49,7 @@ export async function renderRacesPage(outlet, match) {
 
   for (const race of races) {
     const card = document.createElement('div');
+    card.className = 'race-card';
     card.style.cssText = `
       background: var(--color-surface, #fff8ec);
       border: 1px solid var(--color-border, #d4c4a8);
@@ -61,9 +63,9 @@ export async function renderRacesPage(outlet, match) {
 
     card.innerHTML = `
       <h3 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-lg,1.125rem);color:var(--color-primary,#8b0000);margin-bottom:0.25rem;">
-        ${race.name}
+        ${escapeHtml(race.name)}
       </h3>
-      <p style="font-size:0.8rem;color:var(--color-text-muted,#6b5a4a);">${race.index}</p>
+      <p style="font-size:0.8rem;color:var(--color-text-muted,#6b5a4a);">${escapeHtml(race.index)}</p>
     `;
 
     card.addEventListener('click', () => {
@@ -72,18 +74,32 @@ export async function renderRacesPage(outlet, match) {
     });
 
     grid.appendChild(card);
-
-    fetchRace(race.index).then(full => {
-      const meta = [];
-      if (full.size) meta.push(full.size);
-      if (full.speed) meta.push(`${full.speed} pés`);
-      if (full.subraces?.length) meta.push(`${full.subraces.length} sub-raças`);
-      if (meta.length) {
-        const p = card.querySelector('p');
-        p.textContent = meta.join(' · ');
-      }
-    }).catch(() => {});
   }
+
+  fetchBatch(
+    races.map(r => r.index),
+    (index) => fetchRace(index),
+    10
+  ).then(results => {
+    for (const { item, value: full } of results) {
+      if (!full) continue;
+      const cards = grid.querySelectorAll('.race-card');
+      for (const card of cards) {
+        const nameEl = card.querySelector('h3');
+        if (nameEl?.textContent === full.name || nameEl?.textContent === item) {
+          const meta = [];
+          if (full.size) meta.push(full.size);
+          if (full.speed) meta.push(`${full.speed} pés`);
+          if (full.subraces?.length) meta.push(`${full.subraces.length} sub-raças`);
+          if (meta.length) {
+            const p = card.querySelector('p');
+            p.textContent = meta.join(' · ');
+          }
+          break;
+        }
+      }
+    }
+  });
 
   outlet.appendChild(section);
 }
@@ -109,56 +125,64 @@ async function renderRaceDetail(outlet, index) {
   section.className = 'container';
   section.style.paddingBottom = '3rem';
 
+  const abHtml = (race.abilityBonuses ?? []).map(ab => `
+    <span style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-accent,#daa520);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;">
+      ${escapeHtml(ab.name)} +${escapeHtml(String(ab.bonus))}
+    </span>
+  `).join('');
+
+  const traitsHtml = (race.traits ?? []).map(t => `
+    <li style="color:var(--color-text,#2c1810);">${escapeHtml(t)}</li>
+  `).join('');
+
+  const subracesHtml = (race.subraces ?? []).map(s => `
+    <a href="/racas/${s.toLowerCase().replace(/\s+/g, '-')}" data-nav
+       style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-primary,#8b0000);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;color:var(--color-primary,#8b0000);text-decoration:none;">
+      ${escapeHtml(s)}
+    </a>
+  `).join('');
+
   section.innerHTML = `
     <nav style="padding:var(--spacing-md,1rem) 0;font-size:0.875rem;color:var(--color-text-muted,#6b5a4a);">
       <a href="/" data-nav>${t('nav.home')}</a> /
       <a href="/racas" data-nav>${t('races.title')}</a> /
-      <span>${race.name}</span>
+      <span>${escapeHtml(race.name)}</span>
     </nav>
 
     <div style="max-width:800px;margin:0 auto;padding:var(--spacing-xl,2rem) 0;">
       <h1 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-3xl,2.5rem);color:var(--color-primary,#8b0000);margin-bottom:1rem;">
-        ${race.name}
+        ${escapeHtml(race.name)}
       </h1>
 
       <div style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-border,#d4c4a8);border-radius:var(--radius-md,8px);padding:var(--spacing-lg,1.5rem);margin-bottom:1.5rem;">
-        ${race.size ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('monsters.size')}</strong><span>${race.size}</span></div>` : ''}
-        ${race.speed ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('races.speed')}</strong><span>${race.speed} pés</span></div>` : ''}
-        ${race.languages?.length ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;"><strong>${t('races.languages')}</strong><span>${race.languages.join(', ')}</span></div>` : ''}
+        ${race.size ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('monsters.size')}</strong><span>${escapeHtml(race.size)}</span></div>` : ''}
+        ${race.speed ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('races.speed')}</strong><span>${escapeHtml(String(race.speed))} pés</span></div>` : ''}
+        ${race.languages?.length ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;"><strong>${t('races.languages')}</strong><span>${escapeHtml(race.languages.join(', '))}</span></div>` : ''}
       </div>
 
-      ${race.alignment ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);"><strong>Tendência:</strong> ${race.alignment}</p>` : ''}
-      ${race.age ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);"><strong>Idade:</strong> ${race.age}</p>` : ''}
-      ${race.sizeDescription ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);">${race.sizeDescription}</p>` : ''}
-      ${race.languageDesc ? `<p style="margin-bottom:1.5rem;line-height:1.6;color:var(--color-text,#2c1810);">${race.languageDesc}</p>` : ''}
+      ${race.alignment ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);"><strong>Tendência:</strong> ${escapeHtml(race.alignment)}</p>` : ''}
+      ${race.age ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);"><strong>Idade:</strong> ${escapeHtml(race.age)}</p>` : ''}
+      ${race.sizeDescription ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);">${escapeHtml(race.sizeDescription)}</p>` : ''}
+      ${race.languageDesc ? `<p style="margin-bottom:1.5rem;line-height:1.6;color:var(--color-text,#2c1810);">${escapeHtml(race.languageDesc)}</p>` : ''}
 
       ${race.abilityBonuses?.length ? `
         <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.abilityBonuses')}</h2>
         <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
-          ${race.abilityBonuses.map(ab => `
-            <span style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-accent,#daa520);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;">
-              ${ab.name} +${ab.bonus}
-            </span>
-          `).join('')}
+          ${abHtml}
         </div>
       ` : ''}
 
       ${race.traits?.length ? `
         <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.traits')}</h2>
         <ul style="padding-left:1.5rem;line-height:2;">
-          ${race.traits.map(t => `<li style="color:var(--color-text,#2c1810);">${t}</li>`).join('')}
+          ${traitsHtml}
         </ul>
       ` : ''}
 
       ${race.subraces?.length ? `
         <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.subraces')}</h2>
         <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-          ${race.subraces.map(s => `
-            <a href="/racas/${s.toLowerCase().replace(/\s+/g, '-')}" data-nav
-               style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-primary,#8b0000);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;color:var(--color-primary,#8b0000);text-decoration:none;">
-              ${s}
-            </a>
-          `).join('')}
+          ${subracesHtml}
         </div>
       ` : ''}
     </div>

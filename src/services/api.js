@@ -3,20 +3,56 @@ import { getLang } from '../utils/locale.js';
 const API_BASE = '/api';
 const GRAPHQL_URL = 'https://www.dnd5eapi.co/graphql';
 
-const cache = new Map();
 const CACHE_TTL = 3600000;
+const MAX_CACHE = 50;
 
-function getCached(key) {
-  const entry = cache.get(key);
-  if (entry && Date.now() - entry.timestamp < CACHE_TTL) {
+class LRUCache {
+  #cache = new Map();
+  #maxSize;
+  #ttl;
+
+  constructor(maxSize = 50, ttlMs = 3600000) {
+    this.#maxSize = maxSize;
+    this.#ttl = ttlMs;
+  }
+
+  get(key) {
+    if (!this.#cache.has(key)) return null;
+    const entry = this.#cache.get(key);
+    if (Date.now() - entry.timestamp > this.#ttl) {
+      this.#cache.delete(key);
+      return null;
+    }
+    this.#cache.delete(key);
+    this.#cache.set(key, entry);
     return entry.data;
   }
-  cache.delete(key);
-  return null;
+
+  set(key, data) {
+    if (this.#cache.size >= this.#maxSize) {
+      const oldest = this.#cache.keys().next().value;
+      if (oldest !== undefined) this.#cache.delete(oldest);
+    }
+    this.#cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  clear() {
+    this.#cache.clear();
+  }
+
+  get size() {
+    return this.#cache.size;
+  }
+}
+
+const cache = new LRUCache(MAX_CACHE, CACHE_TTL);
+
+function getCached(key) {
+  return cache.get(key);
 }
 
 function setCache(key, data) {
-  cache.set(key, { data, timestamp: Date.now() });
+  cache.set(key, data);
 }
 
 async function apiFetch(endpoint, options = {}) {
@@ -346,4 +382,20 @@ export async function fetchEquipmentDetailGQL(index) {
 
 export function clearApiCache() {
   cache.clear();
+}
+
+export async function fetchBatch(items, fetchFn, limit = 10) {
+  const results = [];
+  for (let i = 0; i < items.length; i += limit) {
+    const batch = items.slice(i, i + limit);
+    const batchResults = await Promise.allSettled(
+      batch.map(item => fetchFn(item))
+    );
+    results.push(...batchResults.map((r, j) => ({
+      item: batch[j],
+      value: r.status === 'fulfilled' ? r.value : null,
+      error: r.status === 'rejected' ? r.reason : null,
+    })));
+  }
+  return results;
 }

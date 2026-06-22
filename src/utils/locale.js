@@ -1,7 +1,23 @@
 const STORAGE_KEY = 'torre-do-sabio-lang';
 const DEFAULT_LANG = 'pt-BR';
 
-let currentLang = localStorage.getItem(STORAGE_KEY) || DEFAULT_LANG;
+function safeGet(key, fallback) {
+  try {
+    return localStorage.getItem(key) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function safeSet(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* localStorage indisponível */
+  }
+}
+
+let currentLang = safeGet(STORAGE_KEY, DEFAULT_LANG);
 
 export function getLang() {
   return currentLang;
@@ -10,7 +26,7 @@ export function getLang() {
 export function setLang(lang) {
   if (lang !== 'pt-BR' && lang !== 'en') return;
   currentLang = lang;
-  localStorage.setItem(STORAGE_KEY, lang);
+  safeSet(STORAGE_KEY, lang);
   document.documentElement.setAttribute('lang', lang);
   document.dispatchEvent(
     new CustomEvent('lang-change', { detail: { lang } })

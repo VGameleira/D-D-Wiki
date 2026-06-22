@@ -2185,18 +2185,6 @@
     ],
     "subclasses": [
       {
-        "name": "2nd",
-        "source": "Wolf"
-      },
-      {
-        "name": "4th",
-        "source": "Crocodile"
-      },
-      {
-        "name": "8th",
-        "source": "Giant eagle"
-      },
-      {
         "name": "Dreams",
         "source": "Xanathar's Guide to Everything"
       },
@@ -3618,26 +3606,6 @@
     ],
     "subclasses": [
       {
-        "name": "3rd",
-        "source": "Speak with Animals"
-      },
-      {
-        "name": "5th",
-        "source": "Beast Sense"
-      },
-      {
-        "name": "9th",
-        "source": "Speak with Plants"
-      },
-      {
-        "name": "13th",
-        "source": "Locate Creature"
-      },
-      {
-        "name": "17th",
-        "source": "Commune with Nature"
-      },
-      {
         "name": "Beast Master",
         "source": "Player's Handbook"
       },
@@ -4514,26 +4482,6 @@
       {
         "name": "Stone Sorcery",
         "source": "Unearthed Arcana 28 - Sorcerer"
-      },
-      {
-        "name": "1st",
-        "source": "2"
-      },
-      {
-        "name": "2nd",
-        "source": "3"
-      },
-      {
-        "name": "3rd",
-        "source": "5"
-      },
-      {
-        "name": "4th",
-        "source": "6"
-      },
-      {
-        "name": "5th",
-        "source": "7"
       }
     ]
   },

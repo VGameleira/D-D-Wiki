@@ -216,6 +216,10 @@ export class DndSearch extends HTMLElement {
   #dispatchEvent(name, detail) {
     this.dispatchEvent(new CustomEvent(name, { detail, bubbles: true }));
   }
+
+  disconnectedCallback() {
+    clearTimeout(this.#debounceTimer);
+  }
 }
 
 customElements.define('dnd-search', DndSearch);
