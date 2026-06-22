@@ -148,7 +148,13 @@ export class DndSpellCard extends HTMLElement {
     this.shadowRoot.getElementById('duration').textContent = this.getAttribute('duration') || '—';
 
     const desc = this.getAttribute('description') || '';
-    this.shadowRoot.getElementById('description').textContent = desc.length > 200 ? desc.slice(0, 200) + '...' : desc;
+    const descEl = this.shadowRoot.getElementById('description');
+    if (desc) {
+      descEl.textContent = desc.length > 200 ? desc.slice(0, 200) + '...' : desc;
+      descEl.style.display = '';
+    } else {
+      descEl.style.display = 'none';
+    }
   }
 }
 

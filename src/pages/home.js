@@ -33,7 +33,7 @@ export async function renderHomePage(outlet) {
     card.setAttribute('slug', cls.slug);
     card.setAttribute('name', cls.name);
     card.setAttribute('description', cls.shortDescription || cls.description?.slice(0, 200) || '');
-    card.setAttribute('img', cls.image || '/img/classes/' + cls.slug + '.png');
+    card.setAttribute('img', cls.image || '');
     grid.appendChild(card);
   }
 
