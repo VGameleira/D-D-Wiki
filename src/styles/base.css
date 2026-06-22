@@ -120,3 +120,241 @@ button {
   clip: rect(0, 0, 0, 0);
   border: 0;
 }
+
+/* === Tipografia de Páginas === */
+.page-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  color: var(--color-primary);
+}
+
+.page-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-md);
+}
+
+.subsection-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+}
+
+.breadcrumb {
+  padding: var(--spacing-md) 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.breadcrumb a {
+  color: var(--color-primary);
+}
+
+/* === Cards e Grades === */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-2xl);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.card-meta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* === Stat Blocks (monstros, atributos) === */
+.stat-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-weight: 700;
+}
+
+/* === Estados === */
+.error-state {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.error-state h2 {
+  font-family: var(--font-display);
+  color: var(--color-danger);
+  margin-bottom: var(--spacing-md);
+}
+
+.error-state p {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+}
+
+.loading-state {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+/* === Tags / Badges === */
+.tag {
+  display: inline-block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.tag-primary {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* === Feature/Description Blocks === */
+.feature-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.feature-block h3 {
+  font-family: var(--font-display);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+  font-size: 1.1rem;
+}
+
+.feature-block .feature-level {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+.feature-block .feature-desc {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+/* === Ability Score Grid === */
+.ability-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.ability-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  padding: 0.75rem 0.25rem;
+}
+
+.ability-label {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.ability-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* === Header sections === */
+.page-header {
+  text-align: center;
+  padding: var(--spacing-xl) 0 var(--spacing-md);
+}
+
+.page-header p {
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-sm);
+}
+
+/* === Detail layout === */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: var(--spacing-xl) 0;
+}
+
+.detail-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) 0;
+}
+
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ability-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .page-title {
+    font-size: var(--font-size-2xl);
+  }
+}

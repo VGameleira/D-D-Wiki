@@ -1,3 +1,13 @@
+import { loadData } from '../utils/fetch-data.js';
+
+const STATIC_LINKS = [
+  { href: '/', label: 'Início' },
+  { href: '/magias', label: 'Magias' },
+  { href: '/monstros', label: 'Monstros' },
+  { href: '/equipamentos', label: 'Equipamentos' },
+  { href: '/racas', label: 'Raças' },
+];
+
 const template = document.createElement('template');
 template.innerHTML = `
   <style>
@@ -30,6 +40,16 @@ template.innerHTML = `
       color: #fff;
     }
 
+    .nav-links .nav-section {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-accent, #daa520);
+      padding: 0.5rem 0.75rem 0.25rem;
+      font-weight: 700;
+      opacity: 0.7;
+    }
+
     .menu-btn {
       display: none;
       background: none;
@@ -57,6 +77,8 @@ template.innerHTML = `
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         min-width: 220px;
         gap: 0.25rem;
+        max-height: 80vh;
+        overflow-y: auto;
       }
 
       .nav-links.open {
@@ -67,25 +89,6 @@ template.innerHTML = `
 
   <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
   <ul class="nav-links" id="navLinks" role="navigation" aria-label="Navegação principal">
-    <li><a href="/" data-nav>Início</a></li>
-    <li><a href="/magias" data-nav>Magias</a></li>
-    <li><a href="/monstros" data-nav>Monstros</a></li>
-    <li><a href="/equipamentos" data-nav>Equipamentos</a></li>
-    <li><a href="/racas" data-nav>Raças</a></li>
-    <li><a href="/classes/artificer" data-nav>Artífice</a></li>
-    <li><a href="/classes/barbarian" data-nav>Bárbaro</a></li>
-    <li><a href="/classes/bard" data-nav>Bardo</a></li>
-    <li><a href="/classes/warlock" data-nav>Bruxo</a></li>
-    <li><a href="/classes/cleric" data-nav>Clérigo</a></li>
-    <li><a href="/classes/druid" data-nav>Druida</a></li>
-    <li><a href="/classes/sorcerer" data-nav>Feiticeiro</a></li>
-    <li><a href="/classes/fighter" data-nav>Guerreiro</a></li>
-    <li><a href="/classes/rogue" data-nav>Ladino</a></li>
-    <li><a href="/classes/wizard" data-nav>Mago</a></li>
-    <li><a href="/classes/monk" data-nav>Monge</a></li>
-    <li><a href="/classes/paladin" data-nav>Paladino</a></li>
-    <li><a href="/classes/ranger" data-nav>Patrulheiro</a></li>
-    <li><a href="/classes/blood-hunter" data-nav>Caçador de Sangue</a></li>
   </ul>
 `;
 
@@ -95,6 +98,43 @@ export class DndNavbar extends HTMLElement {
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
     this.#setupMobileMenu();
+    this.#loadLinks();
+  }
+
+  async #loadLinks() {
+    const navLinks = this.shadowRoot.getElementById('navLinks');
+
+    for (const link of STATIC_LINKS) {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="${link.href}" data-nav>${link.label}</a>`;
+      navLinks.appendChild(li);
+    }
+
+    const sectionLabel = document.createElement('li');
+    sectionLabel.className = 'nav-section';
+    sectionLabel.textContent = 'Classes';
+    navLinks.appendChild(sectionLabel);
+
+    try {
+      const classes = await loadData('classes');
+      const fragment = document.createDocumentFragment();
+      for (const cls of classes) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="/classes/${cls.slug}" data-nav>${cls.name}</a>`;
+        fragment.appendChild(li);
+      }
+      navLinks.appendChild(fragment);
+    } catch {
+      const fallback = ['artificer', 'barbarian', 'bard', 'warlock', 'cleric', 'druid', 'sorcerer', 'fighter', 'rogue', 'wizard', 'monk', 'paladin', 'ranger', 'blood-hunter'];
+      const fallbackNames = ['Artífice', 'Bárbaro', 'Bardo', 'Bruxo', 'Clérigo', 'Druida', 'Feiticeiro', 'Guerreiro', 'Ladino', 'Mago', 'Monge', 'Paladino', 'Patrulheiro', 'Caçador de Sangue'];
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < fallback.length; i++) {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="/classes/${fallback[i]}" data-nav>${fallbackNames[i]}</a>`;
+        fragment.appendChild(li);
+      }
+      navLinks.appendChild(fragment);
+    }
   }
 
   #setupMobileMenu() {

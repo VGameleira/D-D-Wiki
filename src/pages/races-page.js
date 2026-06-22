@@ -9,14 +9,14 @@ export async function renderRacesPage(outlet, match) {
     return renderRaceDetail(outlet, match[1]);
   }
 
-  outlet.innerHTML = `<div class="container" style="text-align:center;padding:4rem 1rem;"><h2>Carregando...</h2></div>`;
+  outlet.innerHTML = `<div class="loading-state"><h2>${t('common.loading')}</h2></div>`;
 
   let data;
   try {
     data = await fetchRaces();
   } catch {
     outlet.innerHTML = `
-      <div class="container" style="text-align:center;padding:4rem 1rem;">
+      <div class="error-state">
         <h2>${t('common.error')}</h2>
         <p>${t('common.errorMsg')}</p>
       </div>
@@ -30,18 +30,16 @@ export async function renderRacesPage(outlet, match) {
   section.className = 'container';
 
   section.innerHTML = `
-    <nav style="padding:var(--spacing-md,1rem) 0;font-size:0.875rem;color:var(--color-text-muted,#6b5a4a);">
+    <nav class="breadcrumb">
       <a href="/" data-nav>${t('nav.home')}</a> / <span>${t('races.title')}</span>
     </nav>
 
-    <div style="text-align:center;padding:var(--spacing-xl,2rem) 0 var(--spacing-md,1rem);">
-      <h1 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-3xl,2.5rem);color:var(--color-primary,#8b0000);">
-        ${t('races.title')}
-      </h1>
-      <p style="color:var(--color-text-muted,#6b5a4a);">${t('races.count', { n: races.length })}</p>
+    <div class="page-header">
+      <h1 class="page-title">${t('races.title')}</h1>
+      <p>${t('races.count', { n: races.length })}</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--spacing-md,1rem);padding-bottom:var(--spacing-2xl,3rem);" id="raceGrid">
+    <div class="card-grid" id="raceGrid">
     </div>
   `;
 
@@ -49,23 +47,10 @@ export async function renderRacesPage(outlet, match) {
 
   for (const race of races) {
     const card = document.createElement('div');
-    card.className = 'race-card';
-    card.style.cssText = `
-      background: var(--color-surface, #fff8ec);
-      border: 1px solid var(--color-border, #d4c4a8);
-      border-radius: var(--radius-md, 8px);
-      padding: var(--spacing-md, 1rem);
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    `;
-    card.onmouseover = () => { card.style.transform = 'translateY(-2px)'; card.style.boxShadow = '0 4px 12px var(--color-shadow, rgba(44,24,16,0.1))'; };
-    card.onmouseout = () => { card.style.transform = ''; card.style.boxShadow = ''; };
-
+    card.className = 'card';
     card.innerHTML = `
-      <h3 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-lg,1.125rem);color:var(--color-primary,#8b0000);margin-bottom:0.25rem;">
-        ${escapeHtml(race.name)}
-      </h3>
-      <p style="font-size:0.8rem;color:var(--color-text-muted,#6b5a4a);">${escapeHtml(race.index)}</p>
+      <h3 class="card-title">${escapeHtml(race.name)}</h3>
+      <p class="card-meta">${escapeHtml(race.index)}</p>
     `;
 
     card.addEventListener('click', () => {
@@ -83,16 +68,16 @@ export async function renderRacesPage(outlet, match) {
   ).then(results => {
     for (const { item, value: full } of results) {
       if (!full) continue;
-      const cards = grid.querySelectorAll('.race-card');
+      const cards = grid.querySelectorAll('.card');
       for (const card of cards) {
-        const nameEl = card.querySelector('h3');
+        const nameEl = card.querySelector('.card-title');
         if (nameEl?.textContent === full.name || nameEl?.textContent === item) {
           const meta = [];
           if (full.size) meta.push(full.size);
           if (full.speed) meta.push(`${full.speed} pés`);
           if (full.subraces?.length) meta.push(`${full.subraces.length} sub-raças`);
           if (meta.length) {
-            const p = card.querySelector('p');
+            const p = card.querySelector('.card-meta');
             p.textContent = meta.join(' · ');
           }
           break;
@@ -105,14 +90,14 @@ export async function renderRacesPage(outlet, match) {
 }
 
 async function renderRaceDetail(outlet, index) {
-  outlet.innerHTML = `<div class="container" style="text-align:center;padding:4rem 1rem;"><h2>Carregando...</h2></div>`;
+  outlet.innerHTML = `<div class="loading-state"><h2>${t('common.loading')}</h2></div>`;
 
   let race;
   try {
     race = await fetchRace(index);
   } catch {
     outlet.innerHTML = `
-      <div class="container" style="text-align:center;padding:4rem 1rem;">
+      <div class="error-state">
         <h2>${t('common.error')}</h2>
         <p>${t('common.errorMsg')}</p>
         <a href="/racas" data-nav style="color:var(--color-primary,#8b0000);">← ${t('common.back')}</a>
@@ -123,12 +108,9 @@ async function renderRaceDetail(outlet, index) {
 
   const section = document.createElement('section');
   section.className = 'container';
-  section.style.paddingBottom = '3rem';
 
   const abHtml = (race.abilityBonuses ?? []).map(ab => `
-    <span style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-accent,#daa520);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;">
-      ${escapeHtml(ab.name)} +${escapeHtml(String(ab.bonus))}
-    </span>
+    <span class="tag">${escapeHtml(ab.name)} +${escapeHtml(String(ab.bonus))}</span>
   `).join('');
 
   const traitsHtml = (race.traits ?? []).map(t => `
@@ -137,27 +119,23 @@ async function renderRaceDetail(outlet, index) {
 
   const subracesHtml = (race.subraces ?? []).map(s => `
     <a href="/racas/${s.toLowerCase().replace(/\s+/g, '-')}" data-nav
-       style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-primary,#8b0000);border-radius:var(--radius-sm,4px);padding:0.25rem 0.75rem;font-size:0.85rem;color:var(--color-primary,#8b0000);text-decoration:none;">
-      ${escapeHtml(s)}
-    </a>
+       class="tag tag-primary" style="text-decoration:none;">${escapeHtml(s)}</a>
   `).join('');
 
   section.innerHTML = `
-    <nav style="padding:var(--spacing-md,1rem) 0;font-size:0.875rem;color:var(--color-text-muted,#6b5a4a);">
+    <nav class="breadcrumb">
       <a href="/" data-nav>${t('nav.home')}</a> /
       <a href="/racas" data-nav>${t('races.title')}</a> /
       <span>${escapeHtml(race.name)}</span>
     </nav>
 
-    <div style="max-width:800px;margin:0 auto;padding:var(--spacing-xl,2rem) 0;">
-      <h1 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-3xl,2.5rem);color:var(--color-primary,#8b0000);margin-bottom:1rem;">
-        ${escapeHtml(race.name)}
-      </h1>
+    <div class="detail-content">
+      <h1 class="page-title" style="margin-bottom:1rem;">${escapeHtml(race.name)}</h1>
 
-      <div style="background:var(--color-surface,#fff8ec);border:1px solid var(--color-border,#d4c4a8);border-radius:var(--radius-md,8px);padding:var(--spacing-lg,1.5rem);margin-bottom:1.5rem;">
-        ${race.size ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('monsters.size')}</strong><span>${escapeHtml(race.size)}</span></div>` : ''}
-        ${race.speed ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border,#d4c4a8);"><strong>${t('races.speed')}</strong><span>${escapeHtml(String(race.speed))} pés</span></div>` : ''}
-        ${race.languages?.length ? `<div style="display:flex;justify-content:space-between;padding:0.5rem 0;"><strong>${t('races.languages')}</strong><span>${escapeHtml(race.languages.join(', '))}</span></div>` : ''}
+      <div class="stat-block">
+        ${race.size ? `<div class="stat-row"><strong>${t('monsters.size')}</strong><span>${escapeHtml(race.size)}</span></div>` : ''}
+        ${race.speed ? `<div class="stat-row"><strong>${t('races.speed')}</strong><span>${escapeHtml(String(race.speed))} pés</span></div>` : ''}
+        ${race.languages?.length ? `<div class="stat-row"><strong>${t('races.languages')}</strong><span>${escapeHtml(race.languages.join(', '))}</span></div>` : ''}
       </div>
 
       ${race.alignment ? `<p style="margin-bottom:1rem;line-height:1.6;color:var(--color-text,#2c1810);"><strong>Tendência:</strong> ${escapeHtml(race.alignment)}</p>` : ''}
@@ -166,24 +144,18 @@ async function renderRaceDetail(outlet, index) {
       ${race.languageDesc ? `<p style="margin-bottom:1.5rem;line-height:1.6;color:var(--color-text,#2c1810);">${escapeHtml(race.languageDesc)}</p>` : ''}
 
       ${race.abilityBonuses?.length ? `
-        <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.abilityBonuses')}</h2>
-        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
-          ${abHtml}
-        </div>
+        <h2 class="section-title" style="margin-top:0;">${t('races.abilityBonuses')}</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">${abHtml}</div>
       ` : ''}
 
       ${race.traits?.length ? `
-        <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.traits')}</h2>
-        <ul style="padding-left:1.5rem;line-height:2;">
-          ${traitsHtml}
-        </ul>
+        <h2 class="section-title" style="margin-top:0;">${t('races.traits')}</h2>
+        <ul style="padding-left:1.5rem;line-height:2;">${traitsHtml}</ul>
       ` : ''}
 
       ${race.subraces?.length ? `
-        <h2 style="font-family:var(--font-display,'Cinzel',serif);color:var(--color-primary,#8b0000);margin:1.5rem 0 0.75rem;">${t('races.subraces')}</h2>
-        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-          ${subracesHtml}
-        </div>
+        <h2 class="section-title" style="margin-top:0;">${t('races.subraces')}</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">${subracesHtml}</div>
       ` : ''}
     </div>
   `;

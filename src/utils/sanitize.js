@@ -1,9 +1,14 @@
-export function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = String(str ?? '');
-  return div.innerHTML;
-}
+const HTML_ESCAPE = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+};
 
-export function safeInnerHTML(element, html) {
-  element.innerHTML = html;
+const ESCAPE_RE = /[&<>"']/g;
+
+export function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(ESCAPE_RE, ch => HTML_ESCAPE[ch]);
 }

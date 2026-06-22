@@ -1,18 +1,11 @@
-/**
- * Página de magias — grade filtrada por nível, escola, nome.
- */
 import { loadData } from '../utils/fetch-data.js';
 
-/**
- * Renderiza a página de listagem de magias.
- * @param {HTMLElement} outlet
- */
 export async function renderSpellsPage(outlet) {
   let spells;
   try {
     spells = await loadData('spells');
   } catch {
-    outlet.innerHTML = `<div class="container" style="text-align:center;padding:4rem 1rem;"><h2>Erro ao carregar magias</h2></div>`;
+    outlet.innerHTML = `<div class="loading-state"><h2>Erro ao carregar magias</h2></div>`;
     return;
   }
 
@@ -23,7 +16,6 @@ export async function renderSpellsPage(outlet) {
     8: '8º Círculo', 9: '9º Círculo',
   };
 
-  /* Agrupa magias por nível */
   const byLevel = {};
   for (const spell of spells) {
     const lvl = spell.level ?? 0;
@@ -35,15 +27,13 @@ export async function renderSpellsPage(outlet) {
   section.className = 'container';
 
   section.innerHTML = `
-    <nav style="padding:var(--spacing-md,1rem) 0;font-size:0.875rem;color:var(--color-text-muted,#6b5a4a);">
+    <nav class="breadcrumb">
       <a href="/" data-nav>Início</a> / <span>Magias</span>
     </nav>
 
-    <div style="text-align:center;padding:var(--spacing-xl,2rem) 0 var(--spacing-md,1rem);">
-      <h1 style="font-family:var(--font-display,'Cinzel',serif);font-size:var(--font-size-3xl,2.5rem);color:var(--color-primary,#8b0000);">
-        Magias
-      </h1>
-      <p style="color:var(--color-text-muted,#6b5a4a);">${spells.length} magias disponíveis</p>
+    <div class="page-header">
+      <h1 class="page-title">Magias</h1>
+      <p>${spells.length} magias disponíveis</p>
     </div>
 
     <div style="display:flex;gap:var(--spacing-sm,0.5rem);flex-wrap:wrap;justify-content:center;margin-bottom:var(--spacing-xl,2rem);" id="levelFilters">
@@ -57,7 +47,7 @@ export async function renderSpellsPage(outlet) {
       </button>
     </div>
 
-    <div id="spellGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--spacing-md,1rem);padding-bottom:var(--spacing-2xl,3rem);">
+    <div class="card-grid" id="spellGrid">
     </div>
   `;
 
@@ -96,7 +86,6 @@ export async function renderSpellsPage(outlet) {
     }
   }
 
-  /* Filtros de nível */
   const filterBtns = section.querySelectorAll('.level-filter');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -111,7 +100,5 @@ export async function renderSpellsPage(outlet) {
   });
 
   outlet.appendChild(section);
-
-  /* Renderiza tudo inicialmente */
   renderSpells('all');
 }
