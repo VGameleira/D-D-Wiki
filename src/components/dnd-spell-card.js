@@ -74,6 +74,14 @@ template.innerHTML = `
       color: var(--color-text, #2c1810);
       line-height: 1.5;
     }
+
+    @media (max-width: 480px) {
+      .meta-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.1rem;
+      }
+    }
   </style>
 
   <div class="card" id="card">

@@ -44,6 +44,8 @@ template.innerHTML = `
     .stat-row {
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.25rem;
     }
 
     .stat-label {

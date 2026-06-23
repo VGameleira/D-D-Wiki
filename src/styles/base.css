@@ -356,6 +356,13 @@ button {
   padding: var(--spacing-xl) 0;
 }
 
+/* === Scroll horizontal para tabelas e filtros === */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
 @media (max-width: 768px) {
   .detail-grid {
     grid-template-columns: 1fr;
@@ -367,5 +374,65 @@ button {
 
   .page-title {
     font-size: var(--font-size-2xl);
+  }
+
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .stat-block {
+    padding: var(--spacing-md);
+  }
+
+  .filter-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .detail-content {
+    padding: var(--spacing-md) 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .page-header {
+    padding: var(--spacing-md) 0 var(--spacing-sm);
+  }
+
+  .ability-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-row {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .stat-row > span {
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .detail-content {
+    padding: var(--spacing-sm) 0;
+  }
+
+  .card-grid {
+    gap: var(--spacing-sm);
+  }
+
+  .breadcrumb {
+    font-size: 0.8rem;
+    padding: var(--spacing-sm) 0;
   }
 }

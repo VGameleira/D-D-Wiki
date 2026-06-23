@@ -37,7 +37,7 @@ template.innerHTML = `
 
     .card-image {
       width: 100%;
-      height: 200px;
+      height: clamp(160px, 30vw, 200px);
       object-fit: cover;
       border-bottom: 2px solid var(--color-accent, #daa520);
     }

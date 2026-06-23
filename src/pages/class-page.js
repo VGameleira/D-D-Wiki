@@ -59,7 +59,7 @@ export async function renderClassPage(outlet, match) {
   header.className = 'page-header';
   header.innerHTML = `
     <h1 class="page-title">${escapeHtml(cls.name)}</h1>
-    ${cls.image ? `<figure style="margin:var(--spacing-lg,1.5rem) auto;max-width:400px;">
+    ${cls.image ? `<figure style="margin:var(--spacing-lg,1.5rem) auto;max-width:min(400px,100%);">
       <img src="${escapeHtml(cls.image)}" alt="${escapeHtml(cls.name)}" style="width:100%;height:auto;border-radius:var(--radius-md,8px);box-shadow:0 4px 12px var(--color-shadow,rgba(44,24,16,0.1));" loading="lazy" />
     </figure>` : ''}
     <p class="page-subtitle" style="max-width:700px;margin:0 auto;line-height:1.6;">
